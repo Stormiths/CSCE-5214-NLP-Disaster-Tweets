@@ -4,8 +4,9 @@
 
 Prerequisites
 Python 3.6 or higher installed on your system.
-Train and Test Datasets: Ensure you have train.csv and test.csv files placed in the project directory.
+Train and Test Datasets: 
 
+Ensure you have train.csv and test.csv files placed in the project directory.
 They are included in this git project, but if you need them otherwise:
 
 You can download both from www.kaggle.com/competitions/nlp-getting-started/data
