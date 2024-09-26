@@ -30,22 +30,18 @@ python -m venv venv
 Activate the virtual environment:
 venv\Scripts\activate
 
+If you do not allow scripts to be executed through powershell, you may use cmd. 
+
+Follow the same instructions
+but instead of using venv\Scripts\activate, use "venv\Scripts\activate.bat"
+
 ### Install Required Libraries
 
 Install the necessary Python packages using pip:
 
 pip install flask pandas seaborn scikit-learn nltk imbalanced-learn matplotlib -UPDATE FOR BERT-
 
-### Download NLTK Data
-
-Open a Python interpreter to download the required NLTK data:
-
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-
 Execute these commands in the Python interpreter.
-
 
 ## Running the Application
 ### Start the Flask Server
