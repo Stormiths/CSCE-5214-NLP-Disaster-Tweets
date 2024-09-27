@@ -24,15 +24,53 @@ def home():
 
 @app.route('/run_model', methods=['POST'])
 def run_model():
-    python_exe = sys.executable
     model = request.form['model']
+    pythonExe = sys.executable
     if model == 'logistic_regression':
-        # Run the logistic regression script
-        subprocess.call([python_exe, 'logistical_regression.py'])
-        return 'Logistic Regression model has been run.'
+        # Run the LR script and use the output
+        process = subprocess.Popen(
+            [pythonExe, 'logistic_regression.py'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        stdout, stderr = process.communicate()
+        if process.returncode != 0:
+            output = f"An error occurred:\n{stderr}"
+        else:
+            output = stdout
+
+        # Place the output on the new page
+        html = f'''
+        <html>
+        <head>
+            <title>Logistic Regression Output</title>
+        </head>
+        <body>
+            <h1>Logistic Regression Model Output</h1>
+            <pre>{output}</pre>
+            <a href="/">Go Back</a>
+        </body>
+        </html>
+        '''
+        return render_template_string(html)
     elif model == 'bert':
-        # Replace when bert method is given
-        return 'BERT model functionality is not implemented yet.'
+        # To easily deploy, follow the same format as the above if statement
+        # make sure to use the python_exe to run the script, otherwise
+        # there is problems with libraries.
+        html = '''
+        <html>
+        <head>
+            <title>BERT Output</title>
+        </head>
+        <body>
+            <h1>BERT Model Output</h1>
+            <p>BERT model functionality is not implemented yet.</p>
+            <a href="/">Go Back</a>
+        </body>
+        </html>
+        '''
+        return render_template_string(html)
     else:
         return 'Invalid option.'
 
