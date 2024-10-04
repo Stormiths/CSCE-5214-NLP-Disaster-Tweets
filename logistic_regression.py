@@ -18,7 +18,7 @@ import sys
 import io
 
 # Download NLTK data
-nltk.download('punkt_tab')
+nltk.download('punkt')
 nltk.download('stopwords')
 
 def main():
@@ -26,23 +26,12 @@ def main():
     pipedOutput = io.StringIO()
     sys.stdout = pipedOutput
 
-    # The rest is still mostly the same
-
     # Loading train.csv and test.csv
     train_df = pd.read_csv('train.csv')
-    test_df = pd.read_csv('test.csv')
 
     # Step 2: Checking for Class Imbalance in Train Data
     class_distribution = train_df['target'].value_counts()
     print("Class Distribution (Train dataset):\n", class_distribution)
-
-    # Plotting the class distribution - if desired
-    # sns.barplot(x=class_distribution.index, y=class_distribution.values)
-    # plt.title("Class Distribution: Disaster vs Non-Disaster Tweets")
-    # plt.ylabel("Number of Tweets")
-    # plt.xlabel("Class (0 = Non-disaster, 1 = Disaster)")
-    # plt.savefig('class_distribution.png')
-    # plt.close()
 
     # Step 3: Preprocessing the text (Cleaning the data)
     def preprocess_text(text):
@@ -77,35 +66,36 @@ def main():
     oversampler = RandomOverSampler(random_state=42)
     X_resampled, y_resampled = oversampler.fit_resample(X, y)
 
-    # Verifying the new class distribution after oversampling
-    print(f"Resampled class distribution:\n{pd.Series(y_resampled).value_counts()}")
-
     # Step 6: Train-Test Split
     X_train, X_test, y_train, y_test = train_test_split(
         X_resampled, y_resampled, test_size=0.2, random_state=42)
 
     # Step 7: Model Training (Logistic Regression)
-    # Initialising the model
-    model = LogisticRegression(max_iter=1000)  # Increase max_iter if needed
-
-    # Training the model
+    model = LogisticRegression(max_iter=1000)
     model.fit(X_train, y_train)
 
     # Step 8: Predictions and Evaluation
     y_pred = model.predict(X_test)
 
-    # Evaluating accuracy
     accuracy = accuracy_score(y_test, y_pred)
     print(f"Accuracy: {accuracy * 100:.2f}%\n")
 
-    # Detailed classification report
     report = classification_report(y_test, y_pred)
     print("Classification Report:\n", report)
 
-    # Clear
-    sys.stdout = sys.__stdout__
+    # Step 9: Predicting a custom tweet
+    def predict_custom_tweet(tweet):
+        processed_tweet = preprocess_text(tweet)
+        tweet_vector = tfidf.transform([processed_tweet])
+        prediction = model.predict(tweet_vector)
+        return "Disaster" if prediction[0] == 1 else "Non-Disaster"
 
-    # Giving the output will let us put it on the page
+    # Example of using the custom prediction:
+    user_tweet = input("Enter a tweet to classify: ")
+    result = predict_custom_tweet(user_tweet)
+    print(f"The tweet is classified as: {result}")
+
+    sys.stdout = sys.__stdout__
     return pipedOutput.getvalue()
 
 if __name__ == "__main__":
